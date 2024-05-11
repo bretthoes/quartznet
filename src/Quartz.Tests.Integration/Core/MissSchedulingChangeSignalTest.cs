@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 using Quartz.Impl;
-using Quartz.Logging;
+using Quartz.Diagnostics;
 using Quartz.Simpl;
 using Quartz.Spi;
 

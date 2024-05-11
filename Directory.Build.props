@@ -57,10 +57,6 @@
     <DefineConstants>$(DefineConstants);REMOTING</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);DIAGNOSTICS_SOURCE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\quartz-logo-small.png" Pack="true" Visible="false" PackagePath=""/>
   </ItemGroup>

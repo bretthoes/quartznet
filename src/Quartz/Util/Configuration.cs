@@ -15,7 +15,7 @@ internal static class Configuration
         }
         catch (Exception e)
         {
-            var logger = Logging.LogProvider.CreateLogger(nameof(Configuration));
+            var logger = Diagnostics.LogProvider.CreateLogger(nameof(Configuration));
             logger.LogWarning(e, "could not read configuration using ConfigurationManager.GetSection: {ExceptionMessage}", e.Message);
             return null;
         }

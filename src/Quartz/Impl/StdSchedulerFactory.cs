@@ -28,7 +28,7 @@ using Quartz.Core;
 using Quartz.Impl.AdoJobStore;
 using Quartz.Impl.AdoJobStore.Common;
 using Quartz.Impl.Matchers;
-using Quartz.Logging;
+using Quartz.Diagnostics;
 using Quartz.Simpl;
 using Quartz.Spi;
 using Quartz.Util;

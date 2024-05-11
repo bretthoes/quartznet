@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Quartz.Logging;
+namespace Quartz.Diagnostics;
 
 public static class LogProvider
 {
@@ -18,12 +18,4 @@ public static class LogProvider
 
     public static ILogger CreateLogger(string category) => _loggerFactory != null ? _loggerFactory.CreateLogger(category) : NullLogger.Instance;
     public static ILogger<T> CreateLogger<T>() => _loggerFactory != null ? _loggerFactory.CreateLogger<T>() : NullLogger<T>.Instance;
-
-#if DIAGNOSTICS_SOURCE
-    internal static class Cached
-    {
-        internal static readonly Lazy<System.Diagnostics.DiagnosticListener> Default =
-            new(() => new System.Diagnostics.DiagnosticListener(DiagnosticHeaders.DefaultListenerName));
-    }
-#endif
 }

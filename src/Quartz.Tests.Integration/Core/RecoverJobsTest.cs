@@ -5,7 +5,7 @@ using NUnit.Framework;
 using Quartz.Impl;
 using Quartz.Impl.AdoJobStore;
 using Quartz.Listener;
-using Quartz.Logging;
+using Quartz.Diagnostics;
 using Quartz.Simpl;
 using Quartz.Tests.Integration.Utils;
 using Quartz.Util;

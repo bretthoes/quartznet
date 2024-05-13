@@ -61,7 +61,7 @@ services:
 
   aspire-dashboard:
     container_name: aspire-dashboard
-    image: mcr.microsoft.com/dotnet/nightly/aspire-dashboard:8.0-preview
+    image: mcr.microsoft.com/dotnet/nightly/aspire-dashboard:8.0.0-preview.7
     ports:
       - "18888:18888"
       - "4317:18889"

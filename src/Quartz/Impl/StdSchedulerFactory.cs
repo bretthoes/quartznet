@@ -332,6 +332,7 @@ Please add configuration to your application config file to correctly initialize
     public virtual void Initialize(NameValueCollection props)
     {
         cfg = new PropertiesParser(props);
+        Meters.Configure();
         ValidateConfiguration();
     }
 

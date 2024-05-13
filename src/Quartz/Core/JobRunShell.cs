@@ -162,7 +162,7 @@ public class JobRunShell : SchedulerListenerSupport
                 {
                     try
                     {
-                        instCode = trigger.ExecutionComplete(jec, null);
+                        instCode = trigger.ExecutionComplete(jec, result: null);
                         await qs.NotifyJobStoreJobVetoed(trigger, jobDetail, instCode, cancellationToken).ConfigureAwait(false);
 
                         // Even if trigger got vetoed, we still needs to check to see if it's the trigger's finalized run or not.
@@ -189,9 +189,9 @@ public class JobRunShell : SchedulerListenerSupport
                 long startTime = timeProvider.GetTimestamp();
                 long endTime;
 
-                using Activity? activity = QuartzActivitySource.Instance.StartActivity(OperationName.Job.Execute);
-                activity?.SetStartTime(new DateTime(startTime));
-                activity?.EnrichFrom(jec);
+                StartedActivity activity = QuartzActivitySource.StartJobExecute(jec, startTime);
+                Instrumentation instrumentation = Meters.StartJobExecute(jec);
+
 
                 // Execute the job
                 try
@@ -221,7 +221,8 @@ public class JobRunShell : SchedulerListenerSupport
 
                 jec.JobRunTime = timeProvider.GetElapsedTime(startTime, endTime);
 
-                activity?.SetEndTime(new DateTime(endTime, DateTimeKind.Utc));
+                activity.Stop(endTime, jobExEx);
+                instrumentation.EndJobExecute(jec.JobRunTime, jobExEx);
 
                 // notify all job listeners
                 if (!await NotifyJobListenersComplete(qs, jec, jobExEx, cancellationToken).ConfigureAwait(false))

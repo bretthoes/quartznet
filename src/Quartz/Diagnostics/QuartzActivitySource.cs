@@ -8,7 +8,7 @@ internal static class QuartzActivitySource
 {
     internal static readonly ActivitySource Instance = new(ActivityOptions.DefaultListenerName, ActivityOptions.Version);
 
-    public static StartedActivity StartJobExecute(JobExecutionContextImpl jec, long startTime)
+    public static StartedActivity StartJobExecute(JobExecutionContextImpl jec, DateTimeOffset startTime)
     {
         Activity? activity = Instance.CreateActivity(OperationName.Job.Execute, ActivityKind.Internal);
         if (activity == null)
@@ -16,7 +16,7 @@ internal static class QuartzActivitySource
             return new StartedActivity(activity: null);
         }
 
-        activity.SetStartTime(new DateTime(startTime, DateTimeKind.Utc));
+        activity.SetStartTime(startTime.UtcDateTime);
         activity.EnrichFrom(jec);
         activity.Start();
 
@@ -54,14 +54,14 @@ internal readonly struct StartedActivity
         this.activity = activity;
     }
 
-    public void Stop(long endTime, JobExecutionException? jobExEx)
+    public void Stop(DateTimeOffset endTime, JobExecutionException? jobExEx)
     {
         if (activity == null)
         {
             return;
         }
 
-        activity.SetEndTime(new DateTime(endTime, DateTimeKind.Utc));
+        activity.SetEndTime(endTime.UtcDateTime);
 
         if (jobExEx != null)
         {

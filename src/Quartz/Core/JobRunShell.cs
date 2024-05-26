@@ -186,10 +186,10 @@ public class JobRunShell : SchedulerListenerSupport
                 }
 
                 TimeProvider timeProvider = qs.resources.TimeProvider;
-                long startTime = timeProvider.GetTimestamp();
-                long endTime;
+                long startTimestamp = timeProvider.GetTimestamp();
+                long endTimestamp;
 
-                StartedActivity activity = QuartzActivitySource.StartJobExecute(jec, startTime);
+                StartedActivity activity = QuartzActivitySource.StartJobExecute(jec, timeProvider.GetUtcNow());
                 Instrumentation instrumentation = Meters.StartJobExecute(jec);
 
 
@@ -197,31 +197,31 @@ public class JobRunShell : SchedulerListenerSupport
                 try
                 {
                     await job.Execute(jec).ConfigureAwait(false);
-                    endTime = timeProvider.GetTimestamp();
+                    endTimestamp = timeProvider.GetTimestamp();
                 }
                 catch (OperationCanceledException) when (jec.CancellationToken.IsCancellationRequested)
                 {
-                    endTime = timeProvider.GetTimestamp();
+                    endTimestamp = timeProvider.GetTimestamp();
                     logger.LogInformation("Job {JobDetailKey} was cancelled", jobDetail.Key);
                 }
                 catch (JobExecutionException jee)
                 {
-                    endTime = timeProvider.GetTimestamp();
+                    endTimestamp = timeProvider.GetTimestamp();
                     jobExEx = jee;
                     logger.LogError(jee, "Job {JobDetailKey} threw a JobExecutionException: ", jobDetail.Key);
                 }
                 catch (Exception e)
                 {
-                    endTime = timeProvider.GetTimestamp();
+                    endTimestamp = timeProvider.GetTimestamp();
                     logger.LogError(e, "Job {JobDetailKey} threw an unhandled Exception: ", jobDetail.Key);
                     SchedulerException se = new("Job threw an unhandled exception.", e);
                     await qs.NotifySchedulerListenersError($"Job {jec.JobDetail.Key} threw an exception.", se, cancellationToken).ConfigureAwait(false);
                     jobExEx = new JobExecutionException(se, refireImmediately: false);
                 }
 
-                jec.JobRunTime = timeProvider.GetElapsedTime(startTime, endTime);
+                jec.JobRunTime = timeProvider.GetElapsedTime(startTimestamp, endTimestamp);
 
-                activity.Stop(endTime, jobExEx);
+                activity.Stop(timeProvider.GetUtcNow(), jobExEx);
                 instrumentation.EndJobExecute(jec.JobRunTime, jobExEx);
 
                 // notify all job listeners
